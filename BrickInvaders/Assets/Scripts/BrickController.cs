@@ -30,12 +30,17 @@ public class BrickController : MonoBehaviour {
         StartCoroutine("Rotate");
     }
 
+    public void OnDestroy()
+    {
+        gameObject.GetComponentInParent<BrickManager>().removeBrick(gameObject);
+    }
+
     // rotates the brick 90 degrees
     IEnumerator Rotate()
     {
         float startTime = Time.time;
         Quaternion start = transform.rotation;
-        Quaternion finish = Quaternion.AngleAxis(-90, Vector3.forward);
+        Quaternion finish = start * Quaternion.AngleAxis(-90, Vector3.forward);
         float elapsedTime;
         do {
             elapsedTime = Time.time - startTime;
