@@ -11,6 +11,7 @@ public class BrickManager : MonoBehaviour {
     public int width;
     public int height;
     public GameObject brick;
+    public GameObject player;
     public Text scoreText;
     private List<GameObject> bricks;
     public int score;
@@ -19,7 +20,7 @@ public class BrickManager : MonoBehaviour {
 	void Start () {
         bricks = new List<GameObject>();
         target = Vector3.zero;
-        //scoreText.text = "Score: " + score + "";
+        scoreText.text = "Score: " + score.ToString();
 
         // funtion to lay out bricks
         for (int i = 0; i < width; i++)
@@ -33,6 +34,7 @@ public class BrickManager : MonoBehaviour {
 
         StartCoroutine("MoveTarget");
         StartCoroutine("RotateBricks");
+        StartCoroutine("Shoot");
     }
 	
 	// Update is called once per frame
@@ -44,7 +46,11 @@ public class BrickManager : MonoBehaviour {
     {
         bricks.Remove(oldBrick);
         score++;
-        //scoreText.text = "Score: " + score;
+        scoreText.text = "Score: " + score.ToString();
+        if(score == height * width)
+        {
+            player.GetComponent<PaddleControls>().win();
+        }
     }    
 
     // make coroutine to randomly trigger rotation
@@ -61,6 +67,16 @@ public class BrickManager : MonoBehaviour {
 
 
     // make coroutine to randomly trigger shooting
+    IEnumerator Shoot()
+    {
+        int rSelect;
+        while (bricks.Count > 0)
+        {
+            rSelect = Random.Range(0, bricks.Count);
+            bricks[rSelect].GetComponent<BrickController>().shoot();
+            yield return new WaitForSeconds(wait / 4.0f);
+        }
+    }
 
     // moves bricks in a zig-zag like fashion
     IEnumerator MoveTarget()

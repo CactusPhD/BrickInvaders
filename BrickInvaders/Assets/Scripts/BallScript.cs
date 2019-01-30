@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class BallScript : MonoBehaviour {
 
-    public int forceStrength;
-    private Rigidbody rb;
+    public int speed;
+    private Vector3 direction;
+    public GameObject player;
 
 	// Use this for initialization
 	void Start () {
-        rb = gameObject.GetComponent<Rigidbody>();
-        rb.AddForce(-transform.up * forceStrength, ForceMode.Impulse);
+        direction = -transform.up;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-       
+        gameObject.transform.position = Vector3.Lerp(transform.position, transform.position + direction, Time.deltaTime * speed);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Vector3 direction;
-        //rb.AddForce(Vector3.zero, ForceMode.VelocityChange);
         print("Collision Detected");
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -31,17 +30,19 @@ public class BallScript : MonoBehaviour {
         }
         else if (collision.gameObject.CompareTag("Brick"))
         {
-            //this one's fucked
-            direction = -rb.velocity.normalized;
-            Destroy(collision.gameObject);
+            direction = -transform.up;
+            collision.gameObject.GetComponent<BrickController>().destroyBrick();
             print("Collision with Brick");
+        }
+        else if (collision.gameObject.CompareTag("Finish"))
+        {
+            direction = new Vector3(Random.insideUnitCircle.x, 1, 0).normalized;
+            player.GetComponent<PaddleControls>().hit();
         }
         else
         {
-            direction = transform.position - collision.rigidbody.ClosestPointOnBounds(transform.position);
+            direction = new Vector3(-direction.x, direction.y, 0);
             print("Collision with Object");
         }
-        rb.AddForce(direction * forceStrength, ForceMode.Impulse);
-
     }
 }

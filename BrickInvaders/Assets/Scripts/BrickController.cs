@@ -7,6 +7,7 @@ public class BrickController : MonoBehaviour {
 
     public int speed;
     private Vector3 startingPosition;
+    public GameObject bullet;
 
 	// Use this for initialization
 	void Start () {
@@ -19,9 +20,9 @@ public class BrickController : MonoBehaviour {
 	}
 
     // shoots a bullet towards the player
-    void shoot()
+    public void shoot()
     {
-
+        Instantiate(bullet, transform.position, Quaternion.identity);
     }
     
     // allows manager to rotate brick
@@ -30,9 +31,10 @@ public class BrickController : MonoBehaviour {
         StartCoroutine("Rotate");
     }
 
-    public void OnDestroy()
+    public void destroyBrick()
     {
         gameObject.GetComponentInParent<BrickManager>().removeBrick(gameObject);
+        Destroy(gameObject);
     }
 
     // rotates the brick 90 degrees
