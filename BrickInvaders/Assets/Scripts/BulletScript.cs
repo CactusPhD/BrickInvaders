@@ -21,6 +21,7 @@ public class BulletScript : MonoBehaviour {
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            print("Hit Player");
             collision.gameObject.GetComponent<PaddleControls>().hit();
         }
         if (!collision.gameObject.CompareTag("Brick")) {
